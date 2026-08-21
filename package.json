@@ -1,0 +1,24 @@
+{
+  "name": "petstore-api-automation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+"scripts": {
+  "test": "playwright test",
+  "test:parallel": "playwright test --workers=5",
+  "test:qa": "ENV=qa playwright test --workers=5",
+  "test:dev": "ENV=dev playwright test --workers=5",
+  "test:list": "playwright test --list",
+  "report": "playwright show-report"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}
