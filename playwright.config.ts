@@ -13,16 +13,18 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 1,
 
   use: {
-    baseURL: process.env.BASE_URL,
-    extraHTTPHeaders: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }
+    baseURL: process.env.BASE_URL
   },
 
   reporter: [
     ['list'],
-    ['html', { open: 'never' }]
+    [
+      'html',
+      {
+        outputFolder: `playwright-report/${environment}`,
+        open: 'never'
+      }
+    ]
   ],
 
   workers: 5

@@ -1,5 +1,10 @@
 import { test, expect } from '../fixtures/apiFixture';
-import { createPetData } from '../data/petData';
+import {
+  createPetData,
+  defaultHeaders,
+  expectedUpdateData
+} from '../data/petData';
+import { validateStatus } from '../utils/apiAssertions';
 
 test.describe.configure({ mode: 'parallel' });
 
@@ -9,9 +14,12 @@ test.describe('Petstore API Tests', () => {
 
     const petData = createPetData();
 
-    const response = await petApi.createPet(petData);
+    const response = await petApi.createPet(
+      petData,
+      defaultHeaders
+    );
 
-    expect(response.status()).toBe(200);
+    await validateStatus(response, 200);
 
     const createdPet = await response.json();
 
@@ -19,38 +27,34 @@ test.describe('Petstore API Tests', () => {
     expect(createdPet.name).toBe(petData.name);
     expect(createdPet.status).toBe(petData.status);
 
-    // Cleanup
-    await petApi.deletePet(petData.id);
+    await petApi.deletePet(
+      petData.id,
+      defaultHeaders
+    );
   });
 
 
   test('Create Pet and Verify with GET', async ({ petApi }) => {
 
-    // Create
     const petData = createPetData();
 
-    const createResponse = await petApi.createPet(petData);
+    const createResponse = await petApi.createPet(
+      petData,
+      defaultHeaders
+    );
 
-    expect(createResponse.status()).toBe(200);
+    await validateStatus(createResponse, 200);
 
     const createdPet = await createResponse.json();
 
-    // Wait until the created pet is available through GET
-    let getResponse;
+    const getResponse = await petApi.getPet(
+      petData.id,
+      defaultHeaders
+    );
 
-    await expect.poll(
-      async () => {
-        getResponse = await petApi.getPet(petData.id);
-        return getResponse.status();
-      },
-      {
-        timeout: 15000,
-        intervals: [500, 1000, 2000, 3000]
-      }
-    ).toBe(200);
+    await validateStatus(getResponse, 200);
 
-    // Get and verify the created pet
-    const fetchedPet = await getResponse!.json();
+    const fetchedPet = await getResponse.json();
 
     expect(fetchedPet.id).toBe(createdPet.id);
     expect(fetchedPet.name).toBe(createdPet.name);
@@ -59,55 +63,66 @@ test.describe('Petstore API Tests', () => {
     expect(fetchedPet.photoUrls).toEqual(createdPet.photoUrls);
     expect(fetchedPet.tags).toEqual(createdPet.tags);
 
-    // Cleanup
-    await petApi.deletePet(petData.id);
+    await petApi.deletePet(
+      petData.id,
+      defaultHeaders
+    );
   });
 
 
   test('Update Pet - PUT', async ({ petApi }) => {
 
-    // Create a pet first
     const petData = createPetData();
 
-    const createResponse = await petApi.createPet(petData);
+    const createResponse = await petApi.createPet(
+      petData,
+      defaultHeaders
+    );
 
-    expect(createResponse.status()).toBe(200);
+    await validateStatus(createResponse, 200);
 
-    // Update
     const updatedPetData = {
       ...petData,
-      name: 'UpdatedAutomationPet',
-      status: 'sold'
+      status: expectedUpdateData.status
     };
 
-    const updateResponse = await petApi.updatePet(updatedPetData);
+    const updateResponse = await petApi.updatePet(
+      updatedPetData,
+      defaultHeaders
+    );
 
-    expect(updateResponse.status()).toBe(200);
+    await validateStatus(updateResponse, 200);
 
     const updatedPet = await updateResponse.json();
 
     expect(updatedPet.id).toBe(petData.id);
-    expect(updatedPet.name).toBe('UpdatedAutomationPet');
-    expect(updatedPet.status).toBe('sold');
+    expect(updatedPet.name).toBe(petData.name);
+    expect(updatedPet.status).toBe(expectedUpdateData.status);
 
-    // Cleanup
-    await petApi.deletePet(petData.id);
+    await petApi.deletePet(
+      petData.id,
+      defaultHeaders
+    );
   });
 
 
   test('Delete Pet - DELETE', async ({ petApi }) => {
 
-    // Create a pet first
     const petData = createPetData();
 
-    const createResponse = await petApi.createPet(petData);
+    const createResponse = await petApi.createPet(
+      petData,
+      defaultHeaders
+    );
 
-    expect(createResponse.status()).toBe(200);
+    await validateStatus(createResponse, 200);
 
-    // Delete
-    const deleteResponse = await petApi.deletePet(petData.id);
+    const deleteResponse = await petApi.deletePet(
+      petData.id,
+      defaultHeaders
+    );
 
-    expect(deleteResponse.status()).toBe(200);
+    await validateStatus(deleteResponse, 200);
   });
 
 
@@ -115,9 +130,12 @@ test.describe('Petstore API Tests', () => {
 
     const nonExistingPetId = 999999999999999999;
 
-    const response = await petApi.getPet(nonExistingPetId);
+    const response = await petApi.getPet(
+      nonExistingPetId,
+      defaultHeaders
+    );
 
-    expect(response.status()).toBe(404);
+    await validateStatus(response, 404);
   });
 
 });

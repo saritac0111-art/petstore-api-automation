@@ -3,19 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-"scripts": {
-  "test": "playwright test",
-  "test:parallel": "playwright test --workers=5",
-  "test:qa": "ENV=qa playwright test --workers=5",
-  "test:dev": "ENV=dev playwright test --workers=5",
-  "test:list": "playwright test --list",
-  "report": "playwright show-report"
-},
+  "scripts": {
+    "test": "playwright test",
+    "test:qa": "ENV=qa playwright test",
+    "test:dev": "ENV=dev playwright test",
+    "test:parallel:env": "npm run test:qa & npm run test:dev & wait"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.62.1",
+    "@types/node": "^26.3.0",
     "typescript": "^7.0.2"
   },
   "dependencies": {

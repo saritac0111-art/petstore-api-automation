@@ -4,33 +4,45 @@ export class PetApi {
 
   constructor(private request: APIRequestContext) {}
 
-  async createPet(petData: object): Promise<APIResponse> {
-    const response = await this.request.post('pet', {
+  async createPet(
+    petData: object,
+    headers: Record<string, string>
+  ): Promise<APIResponse> {
+
+    return await this.request.post('pet', {
       data: petData,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
+      headers
     });
-
-    return response;
   }
 
-  async getPet(petId: number): Promise<APIResponse> {
-    return await this.request.get(`pet/${petId}`);
+  async getPet(
+    petId: number,
+    headers: Record<string, string>
+  ): Promise<APIResponse> {
+
+    return await this.request.get(`pet/${petId}`, {
+      headers
+    });
   }
 
-  async updatePet(petData: object): Promise<APIResponse> {
+  async updatePet(
+    petData: object,
+    headers: Record<string, string>
+  ): Promise<APIResponse> {
+
     return await this.request.put('pet', {
       data: petData,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
+      headers
     });
   }
 
-  async deletePet(petId: number): Promise<APIResponse> {
-    return await this.request.delete(`pet/${petId}`);
+  async deletePet(
+    petId: number,
+    headers: Record<string, string>
+  ): Promise<APIResponse> {
+
+    return await this.request.delete(`pet/${petId}`, {
+      headers
+    });
   }
 }
