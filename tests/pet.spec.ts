@@ -126,16 +126,29 @@ test.describe('Petstore API Tests', () => {
   });
 
 
-  test('Get Non-Existing Pet - 404', async ({ petApi }) => {
+  test('Get Deleted Pet - 404', async ({ petApi }) => {
 
-    const nonExistingPetId = 999999999999999999;
+    const petData = createPetData();
 
-    const response = await petApi.getPet(
-      nonExistingPetId,
+    const createResponse = await petApi.createPet(
+      petData,
       defaultHeaders
     );
 
-    await validateStatus(response, 404);
-  });
+    await validateStatus(createResponse, 200);
 
+    const deleteResponse = await petApi.deletePet(
+      petData.id,
+      defaultHeaders
+    );
+
+    await validateStatus(deleteResponse, 200);
+
+    const getResponse = await petApi.getPet(
+      petData.id,
+      defaultHeaders
+    );
+
+    await validateStatus(getResponse, 404);
+  });
 });
